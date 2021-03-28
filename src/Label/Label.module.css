@@ -1,22 +1,47 @@
-.buttonWrapper{
-    padding-left: 10px;
-    display: flex;
+.wrapper {
+    border: white 2px solid;
+    height: 200px;
+    width: 700px;
+    padding: 70px;
+    padding-top: 70px;
+    padding-bottom: 120px;
+    margin-left: 100px;
+    
+    
+  }
+
+.buttonWrapper {
+    border: white 2px solid;
+  display: flex;
+  margin-top: 80px;
+  padding-right: 100px;
+  padding-left: 100px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  
 }
 
-.countWrapper{
-    background-color: #66b3ff;
-    margin: 9px;
-
+.countWrapper {
+    border: white 2px solid;
+    padding: 30px;
 }
 
-.countFive{
-    color: #ff0000;
+.countFive {
+  color: #ff0000;
 }
 
-.buttonDisabled{
-    background-color: teal;
+.buttonDisabled {
+  background-color: teal;
+  opacity: 0.5;
 }
 
-button{
-    background-color:#9999ff;
+button {
+  background-color: #00BFFF;
+  width: 100px;
+  height: 50px;
 }
+
+.secondButton{
+    margin-left: 50px;
+}
+

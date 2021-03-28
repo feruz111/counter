@@ -1,0 +1,60 @@
+.wrapper {
+  border: white 2px solid;
+  height: 200px;
+  width: 700px;
+  padding: 70px;
+  padding-top: 70px;
+  padding-bottom: 120px;
+}
+.setButton {
+  width: 100px;
+  height: 50px;
+  background-color: #00bfff;
+}
+
+.setButtonDisabled {
+  width: 100px;
+  height: 50px;
+  background-color: #00bfff;
+  opacity: 0.5;
+}
+
+.firstInputWrapper {
+  display: flex;
+}
+
+.secondInputWrapper {
+  display: flex;
+}
+
+input {
+  font-size: 30px;
+  width: 100px;
+  height: 40px;
+  padding-left: 100px;
+}
+
+.inputsWrapper {
+  border: white 2px solid;
+  padding: 10px;
+}
+
+.buttonWrapper {
+  height: 80px;
+  position: relative;
+  border: 2px solid white;
+  margin: 20px;
+}
+
+.maxMinWrapper {
+  padding-right: 80px;
+}
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}

@@ -7,7 +7,7 @@ type PropsType = {
     className: string
 }
 
-function Button(props: PropsType) {
+function ButtonPage(props: PropsType) {
   return (
       <button
       onClick={ props.onClickHandler }
@@ -17,4 +17,4 @@ function Button(props: PropsType) {
   );
 }
 
-export default Button;
+export default ButtonPage;

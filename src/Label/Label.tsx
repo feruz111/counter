@@ -1,53 +1,62 @@
-import React, { useState } from "react";
-import Button from "../Button/Button";
-import s from "./Label.module.css"
+import React, { ChangeEvent, useState } from "react";
+import ButtonPage from "../Button/ButtonPage";
+import s from "./Label.module.css";
 
-function Label() {
-  let [count, setCount] = useState(0);
+type PropsType = {
+  setCount: (a: number) => void;
+  count: number;
+  maxValue: number;
+  minValue: number;
+  setCountMin: (a: number) => void;
+};
 
-  let disabledIncrement = count === 5;
+function Label(props: PropsType) {
+  let disabledIncrement = props.count >= props.maxValue;
 
-  let disabledReset = count === 0;
+  let disabledReset = props.count === props.minValue;
 
-  let classIncrement = count >= 0 && count < 5 ? s.button : s.buttonDisabled;
+  let classIncrement = !disabledIncrement ? s.button : s.buttonDisabled;
 
-  let classReset = count > 0 ? s.button : s.buttonDisabled;
+  let classReset =
+    props.count < props.minValue || props.count > props.minValue
+      ? s.button
+      : s.buttonDisabled;
 
-  let countClass = count === 5 ? s.countFive : "";
+  let countClass = props.count === props.maxValue ? s.countFive : "";
 
   const onClickHandlerIncrement = () => {
-    if (count < 5) {
-      setCount(count + 1);
+    if (props.count < props.maxValue) {
+      props.setCount(props.count + 1);
     }
   };
 
   const onClickHandlerReset = () => {
-      setCount(0);
+    props.setCount(props.minValue);
   };
 
   return (
-    <div>
+    <div className={s.wrapper}>
       <div className={s.countWrapper}>
-        <div className={countClass}>{count}</div>
+        <div className={countClass}>{props.count}</div>
       </div>
       <div className={s.buttonWrapper}>
-      <div>
-      <Button
-        onClickHandler={onClickHandlerIncrement}
-        content="inc"
-        disabled={disabledIncrement}
-        className={classIncrement}
-      />
+        <div className={s.firstButton}>
+          <ButtonPage
+            onClickHandler={onClickHandlerIncrement}
+            content="inc"
+            disabled={disabledIncrement}
+            className={classIncrement}
+          />
+        </div>
+        <div className={s.secondButton}>
+          <ButtonPage
+            onClickHandler={onClickHandlerReset}
+            content="reset"
+            disabled={disabledReset}
+            className={classReset}
+          />
+        </div>
       </div>
-      <div>
-      <Button
-        onClickHandler={onClickHandlerReset}
-        content="reset"
-        disabled={disabledReset}
-        className={classReset}
-      />
-       </div>
-       </div>
     </div>
   );
 }

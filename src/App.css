@@ -1,12 +1,21 @@
+body{
+  background-color: #19334d;
+  font-size: 40px;
+  color: #00BFFF;
+}
+
 .App {
   text-align: center;
-  background-color: teal;
+  display: flex;
+  /* background-color: teal; */
   width: 100px;
   height: 80px;
   padding-top: 10px;
   margin-left: 100px;
   margin-top: 50px;
-  
+}
+button{
+  font-size: 30px;
 }
 
 
