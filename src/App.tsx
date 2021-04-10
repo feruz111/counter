@@ -1,59 +1,55 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
+import { maxValueSetAC, minValueSetAC } from "./bll/count-reducer";
+import { AppStateType } from "./bll/store";
 import Counter from "./Label/Counter";
 import SettingsPage from "./SettingsPage/SettingsPage";
 
 function App() {
-    let [minValue, setCountMin] = useState(0);
-    let [maxValue, setCountMax] = useState(5);
-    let [count, setCount] = useState(minValue);
-    let [editMode, setEditMode] = useState(false);
-    let [error, setError] = useState(false);
+  const value = useSelector<AppStateType, number>((state) => state.count.value);
+  const error = useSelector<AppStateType, boolean>((state) => state.count.error);
+  const editMode = useSelector<AppStateType, boolean>((state) => state.count.editMode);
+  const reduxMinValue = useSelector<AppStateType, number>(
+    (state) => state.count.minValue
+  );
+  const reduxMaxValue = useSelector<AppStateType, number>(
+    (state) => state.count.maxValue
+  );
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        let asString = localStorage.getItem("countValue");
-        if (asString) {
-            let newValue = JSON.parse(asString);
-            setCount(newValue);
-        }
-    }, []);
+//   useEffect(() => {
+//     let asString = localStorage.getItem("countValue");
+//     if (asString) {
+//       let newValue = JSON.parse(asString);
+//       setCount(newValue);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     localStorage.setItem("countValue", JSON.stringify(count));
+//   }, [count]);
 
 
-
-    useEffect(() => {
-        localStorage.setItem("countValue", JSON.stringify(count));
-    }, [count]);
-
-
-
-
-    const setHandler = (max: number, min: number) => {
-        setCountMax(max);
-        setCountMin(min);
-    };
-
-    return (
-        <div className="App">
-            <SettingsPage
-                minValue={minValue}
-                setError={setError}
-                error={error}
-                setEditMode={setEditMode}
-                editMode={editMode}
-                setHandler={setHandler}
-            />
-            <Counter
-                setError={setError}
-                error={error}
-                editMode={editMode}
-                setCount={setCount}
-                setCountMin={setCountMin}
-                count={count}
-                maxValue={maxValue}
-                minValue={minValue}
-            />
-        </div>
-    );
+  return (
+    <div className="App">
+      <SettingsPage
+        reduxMinValue={reduxMinValue}
+        reduxMaxValue={reduxMaxValue}
+        error={error}
+        editMode={editMode}
+        dispatch={dispatch}
+      />
+      <Counter
+        reduxMinValue={reduxMinValue}
+        reduxMaxValue={reduxMaxValue}
+        error={error}
+        editMode={editMode}
+        count={value}
+        dispatch={dispatch}
+      />
+    </div>
+  );
 }
 
 export default App;

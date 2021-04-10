@@ -1,120 +1,131 @@
 import React, {
-    ChangeEvent,
-    ChangeEventHandler,
-    useEffect,
-    useState,
+  ChangeEvent,
+  ChangeEventHandler,
+  useEffect,
+  useState,
 } from "react";
+import { maxValueSetAC, minValueSetAC, setEditModeAC, setErrorAC } from "../bll/count-reducer";
 import ButtonPage from "../Button/ButtonPage";
 import s from "./SettingsPage.module.css";
 
 type PropsType = {
-    setHandler: (a: number, b: number) => void;
-    editMode: boolean
-    setEditMode: (a: boolean) => void
-    error: boolean
-    setError: (a: boolean) => void;
-    minValue: number;
-
+  reduxMinValue: number;
+  reduxMaxValue: number;
+  editMode: boolean;
+  error: boolean;
+  dispatch: (d: any) => void;
 };
 
 function SettingsPage(props: PropsType) {
-    let [maxValue, setMaxValue] = useState(5);
-    let [minValue, setMinValue] = useState(0);
+  // useEffect(() => {
+  //     let asString = localStorage.getItem("max");
+  //     if (asString) {
+  //         let newValue = JSON.parse(asString);
+  //         setMaxValue(newValue);
+  //     }
+  // }, []);
+  // useEffect(() => {
+  //     let asString = localStorage.getItem("min");
+  //     if (asString) {
+  //         let newValue = JSON.parse(asString);
+  //         setMinValue(newValue);
+  //     }
+  // }, []);
 
-    useEffect(() => {
-        let asString = localStorage.getItem("max");
-        if (asString) {
-            let newValue = JSON.parse(asString);
-            setMaxValue(newValue);
-        }
-    }, []);
-    useEffect(() => {
-        let asString = localStorage.getItem("min");
-        if (asString) {
-            let newValue = JSON.parse(asString);
-            setMinValue(newValue);
-        }
-    }, []);
+  // useEffect(() => {
+  //     localStorage.setItem("max", JSON.stringify(maxValue));
+  // }, [maxValue]);
+  // useEffect(() => {
+  //     localStorage.setItem("min", JSON.stringify(minValue));
+  // }, [minValue]);
 
-    useEffect(() => {
-        localStorage.setItem("max", JSON.stringify(maxValue));
-    }, [maxValue]);
-    useEffect(() => {
-        localStorage.setItem("min", JSON.stringify(minValue));
-    }, [minValue]);
+  if (
+    props.reduxMinValue < 0 ||
+    props.reduxMaxValue < 0 ||
+    props.reduxMinValue === props.reduxMaxValue
+  ) {
+    props.dispatch(setErrorAC(true))
+  } else if (
+    props.reduxMinValue > 0 ||
+    props.reduxMaxValue > 0 ||
+    props.reduxMinValue !== props.reduxMaxValue
+  ) {
+    props.dispatch(setErrorAC(false));
+  }
 
+  let minDisabled =
+    props.reduxMinValue < 0 || props.reduxMinValue === props.reduxMaxValue
+      ? true
+      : false;
+  let maxDisabled =
+    props.reduxMaxValue < 0 || props.reduxMinValue === props.reduxMaxValue
+      ? true
+      : false;
 
-    if (minValue < 0 || maxValue < 0 || minValue === maxValue) {
-        props.setError(true)
-    } else if (minValue > 0 || maxValue > 0 || minValue !== maxValue) {
-        props.setError(false)
-    }
+  let disable =
+    props.reduxMaxValue <= props.reduxMinValue ||
+    props.reduxMinValue < 0 ||
+    props.reduxMaxValue < 0
+      ? true
+      : false;
 
-    let minDisabled = minValue < 0 || minValue === maxValue ? true : false
-    let maxDisabled = maxValue < 0 || minValue === maxValue ? true : false
+  let onMaxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    props.dispatch(setEditModeAC(true));
+    props.dispatch(maxValueSetAC(parseInt(e.currentTarget.value)));
 
-    let disable =
-        maxValue <= minValue || minValue < 0 || maxValue < 0 ? true : false;
+    disable = false;
+  };
 
-    let onMaxChange = (e: ChangeEvent<HTMLInputElement>) => {
-        props.setEditMode(true)
+  let onMinChange = (e: ChangeEvent<HTMLInputElement>) => {
+    props.dispatch(setEditModeAC(true));
+    props.dispatch(minValueSetAC(parseInt(e.currentTarget.value)));
 
-        setMaxValue(parseInt(e.currentTarget.value));
-        disable = false;
-    };
+    disable = false;
+  };
 
-    let onMinChange = (e: ChangeEvent<HTMLInputElement>) => {
-        props.setEditMode(true)
-        setMinValue(parseInt(e.currentTarget.value));
-        disable = false;
-    };
+  const onSetChange = () => {
+    disable = true;
+    props.dispatch(setEditModeAC(false));
+  };
 
-    const onSetChange = () => {
-        disable = true;
-
-        props.setEditMode(false)
-
-        props.setHandler(maxValue, minValue);
-    };
-
-    return (
-        <div className={s.wrapper}>
-            <div className={s.inputsWrapper}>
-                <div className={s.firstInputWrapper}>
-                    <div className={s.maxMinWrapper}>max value:</div>
-                    <div className={s.inputWrapper}>
-                        <input
-                            value={maxValue}
-                            type="number"
-                            onChange={onMaxChange}
-                            className={maxDisabled ? s.inputError : ""}
-                        />
-                    </div>
-                </div>
-                <div className={s.secondInputWrapper}>
-                    <div className={s.maxMinWrapper}>min value:</div>
-                    <div className={s.inputWrapper}>
-                        <input
-                            value={minValue}
-                            type="number"
-                            onChange={onMinChange}
-                            className={minDisabled ? s.inputError : ""}
-                        />
-                    </div>
-                </div>
-            </div>
-            <div className={s.buttonWrapper}>
-                <div className={s.center}>
-                    <ButtonPage
-                        content={"set"}
-                        disabled={disable}
-                        className={disable && "" ? s.setButtonDisabled : s.setButton}
-                        onClickHandler={onSetChange}
-                    />
-                </div>
-            </div>
+  return (
+    <div className={s.wrapper}>
+      <div className={s.inputsWrapper}>
+        <div className={s.firstInputWrapper}>
+          <div className={s.maxMinWrapper}>max value:</div>
+          <div className={s.inputWrapper}>
+            <input
+              value={props.reduxMaxValue}
+              type="number"
+              onChange={onMaxChange}
+              className={maxDisabled ? s.inputError : ""}
+            />
+          </div>
         </div>
-    );
+        <div className={s.secondInputWrapper}>
+          <div className={s.maxMinWrapper}>min value:</div>
+          <div className={s.inputWrapper}>
+            <input
+              value={props.reduxMinValue}
+              type="number"
+              onChange={onMinChange}
+              className={minDisabled ? s.inputError : ""}
+            />
+          </div>
+        </div>
+      </div>
+      <div className={s.buttonWrapper}>
+        <div className={s.center}>
+          <ButtonPage
+            content={"set"}
+            disabled={disable}
+            className={disable && "" ? s.setButtonDisabled : s.setButton}
+            onClickHandler={onSetChange}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default SettingsPage;
