@@ -1,22 +1,22 @@
-import React, {
-  ChangeEvent,
-  ChangeEventHandler,
-  useEffect,
-  useState,
-} from "react";
-import { maxValueSetAC, minValueSetAC, setEditModeAC, setErrorAC } from "../bll/count-reducer";
+import React, { ChangeEvent } from "react";
+import {
+  maxValueSetAC,
+  minValueSetAC,
+  setEditModeAC,
+  setValueAC,
+} from "../bll/count-reducer";
 import ButtonPage from "../Button/ButtonPage";
 import s from "./SettingsPage.module.css";
+import { useDispatch, useSelector } from "react-redux";
+import { AppStateType } from "../bll/store";
 
-type PropsType = {
-  reduxMinValue: number;
-  reduxMaxValue: number;
-  editMode: boolean;
-  error: boolean;
-  dispatch: (d: any) => void;
-};
+function SettingsPage() {
+  const { minValue, maxValue } = useSelector(
+    (state: AppStateType) => state.count
+  );
 
-function SettingsPage(props: PropsType) {
+  const dispatch = useDispatch();
+
   // useEffect(() => {
   //     let asString = localStorage.getItem("max");
   //     if (asString) {
@@ -37,55 +37,31 @@ function SettingsPage(props: PropsType) {
   // }, [maxValue]);
   // useEffect(() => {
   //     localStorage.setItem("min", JSON.stringify(minValue));
-  // }, [minValue]);
+  // }, [minVal ue]);
 
-  if (
-    props.reduxMinValue < 0 ||
-    props.reduxMaxValue < 0 ||
-    props.reduxMinValue === props.reduxMaxValue
-  ) {
-    props.dispatch(setErrorAC(true))
-  } else if (
-    props.reduxMinValue > 0 ||
-    props.reduxMaxValue > 0 ||
-    props.reduxMinValue !== props.reduxMaxValue
-  ) {
-    props.dispatch(setErrorAC(false));
-  }
+  let minDisabled = minValue < 0 || minValue === maxValue;
+  let maxDisabled = maxValue < 0 || minValue === maxValue;
 
-  let minDisabled =
-    props.reduxMinValue < 0 || props.reduxMinValue === props.reduxMaxValue
-      ? true
-      : false;
-  let maxDisabled =
-    props.reduxMaxValue < 0 || props.reduxMinValue === props.reduxMaxValue
-      ? true
-      : false;
-
-  let disable =
-    props.reduxMaxValue <= props.reduxMinValue ||
-    props.reduxMinValue < 0 ||
-    props.reduxMaxValue < 0
-      ? true
-      : false;
+  let disable = maxValue <= minValue || minValue < 0 || maxValue < 0;
 
   let onMaxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    props.dispatch(setEditModeAC(true));
-    props.dispatch(maxValueSetAC(parseInt(e.currentTarget.value)));
+    dispatch(setEditModeAC(true));
+    dispatch(maxValueSetAC(parseInt(e.currentTarget.value)));
 
     disable = false;
   };
 
   let onMinChange = (e: ChangeEvent<HTMLInputElement>) => {
-    props.dispatch(setEditModeAC(true));
-    props.dispatch(minValueSetAC(parseInt(e.currentTarget.value)));
+    dispatch(setEditModeAC(true));
+    dispatch(minValueSetAC(parseInt(e.currentTarget.value)));
 
     disable = false;
   };
 
   const onSetChange = () => {
     disable = true;
-    props.dispatch(setEditModeAC(false));
+    dispatch(setEditModeAC(false));
+    dispatch(setValueAC(minValue));
   };
 
   return (
@@ -95,7 +71,7 @@ function SettingsPage(props: PropsType) {
           <div className={s.maxMinWrapper}>max value:</div>
           <div className={s.inputWrapper}>
             <input
-              value={props.reduxMaxValue}
+              value={maxValue}
               type="number"
               onChange={onMaxChange}
               className={maxDisabled ? s.inputError : ""}
@@ -106,7 +82,7 @@ function SettingsPage(props: PropsType) {
           <div className={s.maxMinWrapper}>min value:</div>
           <div className={s.inputWrapper}>
             <input
-              value={props.reduxMinValue}
+              value={minValue}
               type="number"
               onChange={onMinChange}
               className={minDisabled ? s.inputError : ""}

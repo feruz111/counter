@@ -1,13 +1,13 @@
-import { combineReducers, createStore } from "redux";
+import { applyMiddleware, combineReducers, createStore } from "redux";
+import thunk from "redux-thunk";
 import { countReducer } from "./count-reducer";
 
 const rootReducer = combineReducers({
-    count: countReducer
-})
+  count: countReducer,
+});
 
-export type AppStateType = ReturnType<typeof rootReducer>
+export type AppStateType = ReturnType<typeof rootReducer>;
 
-export const store = createStore(rootReducer)
+export const store = createStore(rootReducer,applyMiddleware(thunk));
 
-type AppStoreType = typeof store
-
+export type AppStoreType = typeof store;

@@ -1,52 +1,55 @@
-import React, { ChangeEvent, Dispatch, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { incCountAC, resetCountAC } from "../bll/count-reducer";
+import {
+  incCountTC,
+  resetCountTC,
+  setValueTC,
+} from "../bll/count-reducer";
 import { AppStateType } from "../bll/store";
 import ButtonPage from "../Button/ButtonPage";
 import s from "./Counter.module.css";
 
-type PropsType = {
-  reduxMinValue: number
-  reduxMaxValue: number
-  count: number;
-  editMode: boolean;
-  error: boolean;
-  dispatch: (d: any) => void
-};
+function Counter() {
+  const { value, minValue, maxValue, error, editMode } = useSelector(
+    (state: AppStateType) => state.count
+  );
 
-function Counter(props: PropsType) {
-  let disabledIncrement = props.count >= props.reduxMaxValue;
+  const dispatch = useDispatch();
 
-  let disabledReset = props.count === props.reduxMinValue;
+  useEffect(() => {
+    dispatch(setValueTC());
+  }, []);
 
-  let classIncrement = !disabledIncrement ? s.button : s.buttonDisabled;
+  let disabledIncrement = value >= maxValue;
+
+  let disabledReset = value === minValue;
+
+  let classIncrement = !disabledIncrement ? s.buttobuttonDisabled : "";
 
   let classReset =
-    props.count < props.reduxMinValue || props.count > props.reduxMinValue
-      ? s.button
-      : s.buttonDisabled;
+    value < minValue || value > minValue ? s.button : s.buttonDisabled;
 
-  let countClass = props.count === props.reduxMaxValue ? s.countFive : "";
+  let countClass = value === maxValue ? s.countFive : "";
 
   const onClickHandlerIncrement = () => {
-    if (props.count < props.reduxMaxValue) {
-      props.dispatch(incCountAC());
+    if (value < maxValue) {
+      dispatch(incCountTC(value));
     }
   };
 
   const onClickHandlerReset = () => {
-    props.dispatch(resetCountAC(props.reduxMinValue))
+    dispatch(resetCountTC(minValue));
   };
 
   return (
     <div className={s.wrapper}>
       <div className={s.countWrapper}>
-        {props.error ? (
+        {error ? (
           <div className={s.error}>{"Incorrect value!"}</div>
-        ) : props.editMode ? (
+        ) : editMode ? (
           <div>{"enter values and press 'set'"}</div>
         ) : (
-          <div className={countClass}>{props.count}</div>
+          <div className={countClass}>{value}</div>
         )}
       </div>
       <div className={s.buttonWrapper}>
@@ -54,16 +57,16 @@ function Counter(props: PropsType) {
           <ButtonPage
             onClickHandler={onClickHandlerIncrement}
             content="inc"
-            disabled={props.editMode || disabledIncrement}
-            className={props.editMode ? s.buttonDisabled : classIncrement}
+            disabled={editMode || disabledIncrement}
+            className={editMode ? s.buttonDisabled : classIncrement}
           />
         </div>
         <div className={s.secondButton}>
           <ButtonPage
             onClickHandler={onClickHandlerReset}
             content="reset"
-            disabled={props.editMode || disabledReset}
-            className={props.editMode ? s.buttonDisabled : classReset}
+            disabled={editMode || disabledReset}
+            className={editMode ? s.buttonDisabled : classReset}
           />
         </div>
       </div>

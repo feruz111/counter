@@ -1,3 +1,5 @@
+import { Dispatch } from "redux";
+
 const InitialState = {
   value: 0,
   maxValue: 5,
@@ -49,6 +51,12 @@ export const countReducer = (
         editMode: action.editMode,
       };
     }
+    case "SET-VALUE": {
+      return {
+        ...state,
+        value: action.newValue,
+      };
+    }
     default: {
       return state;
     }
@@ -66,6 +74,8 @@ export const setErrorAC = (error: boolean) =>
   ({ type: "SET-ERROR", error } as const);
 export const setEditModeAC = (editMode: boolean) =>
   ({ type: "SET-EDITMODE", editMode } as const);
+export const setValueAC = (newValue: number) =>
+  ({ type: "SET-VALUE", newValue } as const);
 
 export type IncValuesActionType = ReturnType<typeof incCountAC>;
 export type ResetCountActionType = ReturnType<typeof resetCountAC>;
@@ -73,6 +83,7 @@ export type MaxValueSetActionType = ReturnType<typeof maxValueSetAC>;
 export type MinValueSetActionType = ReturnType<typeof minValueSetAC>;
 export type SetErrorActionType = ReturnType<typeof setErrorAC>;
 export type SetEditModeActionType = ReturnType<typeof setEditModeAC>;
+export type SetValueActionType = ReturnType<typeof setValueAC>;
 
 type ActionType =
   | IncValuesActionType
@@ -80,4 +91,29 @@ type ActionType =
   | MaxValueSetActionType
   | MinValueSetActionType
   | SetErrorActionType
-  | SetEditModeActionType;
+  | SetEditModeActionType
+  | SetValueActionType;
+
+// THUNKS
+
+export const incCountTC = (value: number) => {
+  return (dispatch: Dispatch) => {
+    localStorage.setItem("countValue", JSON.stringify(value+1));
+    dispatch(incCountAC());
+  };
+};
+export const setValueTC = () => {
+  return (dispatch: Dispatch) => {
+    let asString = localStorage.getItem("countValue");
+    if (asString) {
+      let newValue = JSON.parse(asString);
+      dispatch(setValueAC(newValue));
+    }
+  };
+};
+export const resetCountTC = (value: number) => {
+  return (dispatch: Dispatch) => {
+    localStorage.setItem("countValue", JSON.stringify(value));
+    dispatch(resetCountAC(value));
+  };
+};
